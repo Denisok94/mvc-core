@@ -1,0 +1,25 @@
+{
+    "name": "lite-mvc/core",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LiteMvc\\Core\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "denisok94"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "denisok94/helper": "*",
+        "wa72/url": "^0.7.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "denisok94/helper-composer": true
+        }
+    }
+}
