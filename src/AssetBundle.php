@@ -7,6 +7,14 @@ use denisok94\helper\Helper as H;
 class AssetBundle
 {
     /**
+     * @var array 
+     */
+    public $config = [];
+    /**
+     * @var string 
+     */
+    public $class = [];
+    /**
      * @var string
      */
     public $basePath;

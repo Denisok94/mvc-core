@@ -13,7 +13,11 @@
     }],
     "minimum-stability": "stable",
     "require": {
-        "denisok94/helper": "*",
+        "php": "^8.3",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "denisok94/helper": "0.8.6",
         "wa72/url": "^0.7.0"
     },
     "config": {

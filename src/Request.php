@@ -43,7 +43,7 @@ class Request
      * очистка данных от опасных символов
      * @param array $data
      */
-    private function cleanInput(array $data)
+    private function cleanInput($data)
     {
         if (is_array($data)) {
             $cleaned = [];

@@ -17,7 +17,7 @@ class Controller
 
     public $defaultAction = 'index';
     public $layout = 'main';
-    public $config;
+    public array $config;
 
     /**
      * @var Request

@@ -9,8 +9,8 @@ use denisok94\helper\other\MicroTimer;
 
 class Core
 {
-    public $config;
-    public $queryTimer;
+    public array $config;
+    public MicroTimer $queryTimer;
 
     /**
      * @var Url
@@ -21,8 +21,8 @@ class Core
      */
     public $session;
 
-    public $controllerNamespace = 'app\\controllers';
-    public $controller = 'site';
+    public string $controllerNamespace = 'app\\controllers';
+    public string $controller = 'site';
 
     /**
      *

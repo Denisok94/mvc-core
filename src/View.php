@@ -10,9 +10,15 @@ use denisok94\helper\Helper as H;
 class View
 {
     public $theme;
-    public $config;
-    public $class;
-    public $title;
+    public array $config;
+    public string $class;
+    public string $title;
+    public array $metaTags = [];
+    public array $linkTags = [];
+    public array $css = [];
+    public array $cssFiles = [];
+    public array $js = [];
+    public array $jsFiles = [];
 
     public function __construct($config, $class)
     {
@@ -116,6 +122,7 @@ class View
 
     //----------------------
 
+    public bool $_isPageEnded;
 
     /**
      * @var AssetBundle[] 
