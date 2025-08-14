@@ -23,13 +23,14 @@ class ApiController extends Controller
     {
         header('Access-Control-Allow-Origin: *');
         header('Cache-Control: no-cache');
+        header('Content-Type: application/json; charset=utf-8');
 
         $this->layout = null;
         $this->post = H::toArray($this->request->rawBody);
 
         return parent::beforeAction($action);
     }
-    
+
     /**
      * 
      * @param string $path
