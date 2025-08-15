@@ -93,6 +93,9 @@ class ApiController extends Controller
      */
     public function afterAction($action, &$result)
     {
+        if (isset($result['code'])) {
+            http_response_code((int) $result['code']);
+        }
         $result = H::toJson($result);
         return parent::afterAction($action, $result);
     }
