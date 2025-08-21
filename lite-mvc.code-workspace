@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {},
+	"php.problems.exclude": {
+        "/": [7103]
+    }
+}

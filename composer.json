@@ -11,10 +11,10 @@
         "name": "Denisok94",
         "email": "denisok94@inbox.ru"
     }],
-    "version": "0.0.3",
+    "version": "0.0.4",
     "minimum-stability": "stable",
     "require": {
-        "php": "^8.3",
+        "php": "7.4 || ^8.0 <8.4",
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",

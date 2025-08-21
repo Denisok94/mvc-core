@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteMvc\Core;
+namespace LiteMvc\Core\Component;
 
 /**
  *

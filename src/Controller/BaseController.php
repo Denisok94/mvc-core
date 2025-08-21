@@ -1,14 +1,16 @@
 <?php
 
-namespace LiteMvc\Core;
+namespace LiteMvc\Core\Controller;
 
-use LiteMvc\Core\Request;
+use Exception;
+use ReflectionMethod;
+use LiteMvc\Core\Component\Request;
 use LiteMvc\Core\View;
 
 /**
  *
  */
-class Controller
+class BaseController
 {
     /**
      * @var View
@@ -33,7 +35,7 @@ class Controller
     public const CODE_NOT_FOUND = 404;
     public const CODE_INTERNAL_SERVER_ERROR = 500;
 
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $this->request = new Request();
         $this->config = $config;
@@ -49,9 +51,17 @@ class Controller
     }
 
     /**
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    /**
      *
      * @param string $action
-     * @throws \Exception
+     * @throws Exception
      */
     public function runAction(string $action)
     {
@@ -67,7 +77,7 @@ class Controller
         if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $action)) {
             $methodName = 'action' . str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
             if (method_exists($this, $methodName)) {
-                $method = new \ReflectionMethod($this, $methodName);
+                $method = new ReflectionMethod($this, $methodName);
                 if ($method->isPublic() && $method->getName() === $methodName) {
                     $this->view->title = $action;
                     if ($this->beforeAction($action)) {
@@ -86,7 +96,7 @@ class Controller
      * @param string $action
      * @return bool
      */
-    public function beforeAction($action)
+    public function beforeAction(string $action): bool
     {
         return true;
     }
@@ -94,14 +104,14 @@ class Controller
     /**
      * @param string $action
      */
-    public function afterAction($action, &$result)
+    public function afterAction(string $action, &$result)
     {
     }
 
     /**
      * @param string $view the view name.
      * @param array $params the parameters
-     * @throws \Exception
+     * @throws Exception
      */
     public function render(string $view, $params = [])
     {
@@ -112,7 +122,7 @@ class Controller
     /**
      * @param string $content
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function renderContent($content)
     {

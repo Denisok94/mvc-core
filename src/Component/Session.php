@@ -1,6 +1,8 @@
 <?php
 
-namespace LiteMvc\Core;
+namespace LiteMvc\Core\Component;
+
+use Exception;
 
 /**
  * class Session
@@ -204,27 +206,25 @@ class Session
      * Session::unserialize(session_encode());
      * ```
      * @return array
-     * @throws
+     * @throws Exception
      */
     public static function unserialize(string $session_data)
     {
         $method = ini_get("session.serialize_handler");
         switch ($method) {
-            case "php":
+            case 'php':
                 return self::unserialize_php($session_data);
-                break;
-            case "php_binary":
+            case 'php_binary':
                 return self::unserialize_phpbinary($session_data);
-                break;
             default:
-                throw new \Exception("Unsupported session.serialize_handler: " . $method . ". Supported: php, php_binary");
+                throw new Exception("Unsupported session.serialize_handler: " . $method . ". Supported: php, php_binary");
         }
     }
 
     /**
      * @param string $session_data
      * @return array
-     * @throws
+     * @throws Exception
      */
     private static function unserialize_php(string $session_data)
     {
@@ -232,7 +232,7 @@ class Session
         $offset = 0;
         while ($offset < strlen($session_data)) {
             if (!strstr(substr($session_data, $offset), "|")) {
-                throw new \Exception("invalid data, remaining: " . substr($session_data, $offset));
+                throw new Exception("invalid data, remaining: " . substr($session_data, $offset));
             }
             $pos = strpos($session_data, "|", $offset);
             $num = $pos - $offset;

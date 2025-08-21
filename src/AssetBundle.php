@@ -2,8 +2,12 @@
 
 namespace LiteMvc\Core;
 
+use LiteMvc\Core\View;
 use denisok94\helper\Helper as H;
 
+/**
+ * 
+ */
 class AssetBundle
 {
     /**

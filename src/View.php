@@ -2,6 +2,9 @@
 
 namespace LiteMvc\Core;
 
+use Exception, Throwable;
+use LiteMvc\Core\AssetBundle;
+use LiteMvc\Core\Component\Html;
 use denisok94\helper\Helper as H;
 
 /**
@@ -20,7 +23,7 @@ class View
     public array $js = [];
     public array $jsFiles = [];
 
-    public function __construct($config, $class)
+    public function __construct(array $config, string $class)
     {
         $this->config = $config;
         $this->class = strtolower(str_replace('Controller', '', H::getClassName($class)));
@@ -40,7 +43,7 @@ class View
      * @param string $view the view name.
      * @param array $params the parameters
      * @return string the rendering result
-     * @throws \Exception
+     * @throws Exception
      */
     public function render($view, $params = [], $context = null)
     {
@@ -74,13 +77,13 @@ class View
      * @param array $params the parameters 
      * @param object $context the context 
      * @return string the rendering result
-     * @throws \Exception
+     * @throws Exception
      */
     public function renderFile($viewFile, $params = [], $context = null)
     {
         $output = '';
         if (!is_file($viewFile)) {
-            throw new \Exception("The view file does not exist: $viewFile");
+            throw new Exception("The view file does not exist: $viewFile");
         }
 
         $output = $this->renderPhpFile($viewFile, $params);
@@ -92,7 +95,7 @@ class View
      * @param string $file the view file.
      * @param array $params the parameters
      * @return string the rendering result
-     * @throws \Exception
+     * @throws Exception
      */
     protected function renderPhpFile($file, $params = [])
     {
@@ -103,14 +106,14 @@ class View
         try {
             require $file;
             return ob_get_clean();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             while (ob_get_level() > $_obInitialLevel_) {
                 if (!@ob_end_clean()) {
                     ob_clean();
                 }
             }
             throw $e;
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             while (ob_get_level() > $_obInitialLevel_) {
                 if (!@ob_end_clean()) {
                     ob_clean();

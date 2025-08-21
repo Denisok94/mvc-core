@@ -2,8 +2,9 @@
 
 namespace LiteMvc\Core;
 
-use LiteMvc\Core\Controller;
-use LiteMvc\Core\Session;
+use Throwable;
+use LiteMvc\Core\Component\Session;
+use LiteMvc\Core\Controller\BaseController;
 use Wa72\Url\Url;
 use denisok94\helper\other\MicroTimer;
 
@@ -71,11 +72,11 @@ class Core
 
                 $class = $this->controllerNamespace . '\\' . $class . "Controller";
 
-                /** @var Controller $controller */
+                /** @var BaseController $controller */
                 $controller = new $class($this->config);
                 echo $controller->runAction($alias[2] ?? '');
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             echo $th->getMessage();
             //throw $th;
         }

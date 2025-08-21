@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteMvc\Core;
+namespace LiteMvc\Core\Controller;
 
-use LiteMvc\Core\Controller;
+use LiteMvc\Core\Controller\BaseController;
 use denisok94\helper\Helper as H;
 
 /**
@@ -10,10 +10,10 @@ use denisok94\helper\Helper as H;
  * 
  * @example Пример:
  * ```php
- * // получить все данные
- * $message = $this->post; // array
+ * // получить все входные данные
+ * $message = $this->data; // array
  * // получить параметр из данных
- * $phone = $this->getPost('phone'); // phone or null
+ * $phone = $this->get('phone'); // phone or null
  * 
  * // return ['code', 'status', 'message', 'data'];
  * return $this->sendSuccess(); // http status code 200
@@ -30,7 +30,7 @@ use denisok94\helper\Helper as H;
  * return $this->sendNotFound(); // 404
  * return $this->sendInternalServerError(); // 500
  * 
- * if (!$this->post) {
+ * if (!$this->data) {
  *  return $this->sendBadRequest("Request is null"); // 400
  * }
  * 
@@ -48,12 +48,12 @@ use denisok94\helper\Helper as H;
  * return $this->send(['code' => 204]); // 204
  * return $this->send(['code' => 201, 'data' => $data]); // 201
  */
-class ApiController extends Controller
+class ApiController extends BaseController
 {
     /**
      * @var array
      */
-    public $post = [];
+    public $data = [];
     public const CODE_OK = 200;
     public const CODE_CREATED = 201;
     public const CODE_NO_CONTENT = 204;
@@ -67,34 +67,38 @@ class ApiController extends Controller
      * @param string $action
      * @return bool
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         header('Access-Control-Allow-Origin: *');
         header('Cache-Control: no-cache');
         header('Content-Type: application/json; charset=utf-8');
 
         $this->layout = null;
-        $this->post = H::toArray($this->request->rawBody);
+        $this->data = H::toArray($this->request->rawBody);
 
         return parent::beforeAction($action);
     }
 
     /**
-     * 
+     * Получть значение входящего параметра
      * @param string $path
+     * @param bool $nullValue
      */
-    public function getPost(string $path)
+    public function get(string $path, $nullValue = null)
     {
-        return H::get($this->post, $path);
+        return H::get($this->data, $path, $nullValue);
     }
 
     /**
      * @param string $action
+     * @param array $result
      */
     public function afterAction($action, &$result)
     {
         if (isset($result['code'])) {
             http_response_code((int) $result['code']);
+        } else {
+            http_response_code(ApiController::CODE_OK);
         }
         $result = H::toJson($result);
         return parent::afterAction($action, $result);
