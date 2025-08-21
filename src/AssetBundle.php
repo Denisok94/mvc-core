@@ -40,6 +40,12 @@ class AssetBundle
     public $cssOptions = [];
 
     /**
+     * файлы находяться в web папке
+     * @var bool
+     */
+    public $is_web = false;
+
+    /**
      */
     public function __construct($config)
     {
@@ -70,6 +76,7 @@ class AssetBundle
      */
     public function registerAssetFiles(View $view)
     {
+        $this->init();
         $this->recurse_copy($this->basePath . DIRECTORY_SEPARATOR . $this->sourcePath, $this->getWebAssetPath() . $this->class);
 
         foreach ($this->js as $js) {
@@ -80,30 +87,41 @@ class AssetBundle
         }
     }
 
+    public function init()
+    {
+    }
+
     /**
      * @param string $asset
      * @return string
      */
     public function getAssetUrl(string $asset)
     {
-        return "/assets/" . $this->class . "/$asset";
+        return $this->is_web ? "/$asset" : "/assets/" . $this->class . "/$asset";
     }
 
     /**
      *
-     * @param string $src
+     * @param string $from
      * @param string $dst
      */
-    public function recurse_copy(string $src, string $dst)
+    public function recurse_copy(string $from, string $to)
     {
-        $dir = opendir($src);
-        @mkdir($dst);
+        if ($this->is_web) {
+            return;
+        }
+        $dir = opendir($from);
+        @mkdir($to);
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    $this->recurse_copy($src . '/' . $file, $dst . '/' . $file);
+                $from .= '/' . $file;
+                $to .= '/' . $file;
+                if (is_dir($from)) {
+                    $this->recurse_copy($from, $to);
                 } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
+                    if (!file_exists($to)) {
+                        copy($from, $to);
+                    }
                 }
             }
         }
