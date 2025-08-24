@@ -19,7 +19,8 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "denisok94/helper": ">=0.8.6",
-        "wa72/url": "^0.7.0"
+        "wa72/url": "^0.7.0",
+        "vlucas/phpdotenv": "*"
     },
     "config": {
         "allow-plugins": {
