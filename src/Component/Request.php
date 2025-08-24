@@ -39,6 +39,11 @@ class Request
         if (isset($this->storage[$name])) return $this->storage[$name];
     }
 
+    public function getMethod()
+    {
+        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    }
+
     /**
      * очистка данных от опасных символов
      * @param array $data
