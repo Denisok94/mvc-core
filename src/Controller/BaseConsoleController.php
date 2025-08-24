@@ -7,7 +7,7 @@ use LiteMvc\Core\Controller\BaseController;
 /**
  * todo
  */
-class ConsoleController extends BaseController
+class BaseConsoleController extends BaseController
 {
     
 }

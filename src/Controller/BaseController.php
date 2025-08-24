@@ -4,8 +4,8 @@ namespace LiteMvc\Core\Controller;
 
 use Exception;
 use ReflectionMethod;
-use LiteMvc\Core\Component\Request;
 use LiteMvc\Core\View;
+use LiteMvc\Core\Config;
 
 /**
  *
@@ -19,12 +19,7 @@ class BaseController
 
     public $defaultAction = 'index';
     public $layout = 'main';
-    public array $config;
-
-    /**
-     * @var Request
-     */
-    public $request;
+    public Config $config;
 
     public const CODE_OK = 200;
     public const CODE_CREATED = 201;
@@ -35,27 +30,18 @@ class BaseController
     public const CODE_NOT_FOUND = 404;
     public const CODE_INTERNAL_SERVER_ERROR = 500;
 
-    public function __construct(array $config)
+    public function init(Config $config)
     {
-        $this->request = new Request();
         $this->config = $config;
         $this->view = new View($config, get_class($this));
     }
 
     /**
-     *
+     * todo
      */
     public function actions()
     {
         return [];
-    }
-
-    /**
-     * @return Request
-     */
-    public function getRequest(): Request
-    {
-        return $this->request;
     }
 
     /**
