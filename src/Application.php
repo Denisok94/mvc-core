@@ -11,7 +11,8 @@ use LiteMvc\Core\Component\Session;
 use LiteMvc\Core\Component\Request;
 use LiteMvc\Core\Controller\BaseController;
 use LiteMvc\Core\Logger\MvcLogger;
-use LiteMvc\Core\Logger\ErrorLogger;
+use LiteMvc\Core\Logger\LoggerInterface;
+use LiteMvc\Core\Logger\ErrorHandler;
 use Wa72\Url\Url;
 use denisok94\helper\other\MicroTimer;
 
@@ -19,27 +20,21 @@ class Application
 {
     public Config $config;
     public MicroTimer $queryTimer;
-    public MvcLogger $log;
-
     /**
-     * @var Url
+     * @var MvcLogger|LoggerInterface
      */
-    public $url;
+    public $log;
+    public Url $url;
     /**
      * @var Session|null
      */
     public $session = null;
-
-    /**
-     * @var Request
-     */
-    public $request;
-
+    public Request $request;
     protected ?string $sessionClass = null;
     protected string $controllerNamespace = 'app\\controllers';
     protected string $controllerWebBese = 'site';
-    protected $components = [];
-    protected $params = [];
+    public $components = [];
+    public $params = [];
 
     /**
      *
@@ -47,8 +42,8 @@ class Application
      */
     public function __construct($config = [])
     {
+        ErrorHandler::init();
         $this->queryTimer = new MicroTimer();
-        $this->log = new MvcLogger();
         $this->config = new Config($config);
         $this->request = new Request();
         $this->initConfig();
@@ -79,8 +74,14 @@ class Application
         //
         $this->sessionClass = $this->components['session']['class'] ?? null;
         if ($this->sessionClass) {
-            $s = $this->sessionClass;
-            $this->session = (new $s())->start();
+            $class = $this->sessionClass;
+            $this->session = (new $class())->start();
+        }
+        if (isset($this->components['log']['class'])) {
+            $class = $this->components['log']['class'];
+            $this->log = new $class();
+        } else {
+            $this->log = new MvcLogger();
         }
     }
 
@@ -94,7 +95,6 @@ class Application
      */
     public function run()
     {
-        ErrorLogger::init();
         Mvc::$app = $this;
         $alias = explode('/', $this->url->getPath());
 

@@ -5,7 +5,8 @@ namespace LiteMvc\Core\Logger;
 use LiteMvc\Core\Logger\LoggerInterface;
 
 /**
- * 
+ * https://www.php.net/manual/ru/network.constants.php
+ * https://www.php-fig.org/psr/psr-3/
  */
 class MvcLogger implements LoggerInterface {
     

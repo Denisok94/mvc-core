@@ -2,6 +2,8 @@
 
 namespace LiteMvc\Core;
 
+use LiteMvc\Core\MvcException;
+
 /**
  * 
  */
@@ -28,7 +30,13 @@ class Config
                 'class' => 'LiteMvc\Core\Component\Session',
             ],
             // todo:
+            'log' => [
+                'class' => 'LiteMvc\Core\Logger\MvcLogger',
+                // 'format' => '',
+                // 'levels' => ['error', 'warning'],
+            ],
             // 'errorHandler' => [
+            //     'class' => 'LiteMvc\Core\Logger\ErrorHandler',
             //     'errorAction' => 'site/error',
             // ],
             // 'cache' => [
@@ -63,7 +71,7 @@ class Config
             $this->srcPath = $srcPath;
             $this->viewPath = $srcPath . DIRECTORY_SEPARATOR . "views";
         } else {
-            // error
+            throw new MvcException("в файле конфига не указан 'basePath'", 100);
         }
     }
     
