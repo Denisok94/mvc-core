@@ -3,6 +3,7 @@
 namespace LiteMvc\Core;
 
 use LiteMvc\Core\View;
+use LiteMvc\Core\Config;
 use denisok94\helper\Helper as H;
 
 /**
@@ -11,9 +12,9 @@ use denisok94\helper\Helper as H;
 class AssetBundle
 {
     /**
-     * @var array 
+     * @var Config 
      */
-    public $config = [];
+    public $config;
     /**
      * @var string 
      */
@@ -51,7 +52,7 @@ class AssetBundle
 
     /**
      */
-    public function __construct($config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
         $this->class = strtolower(str_replace('Asset', '', H::getClassName(get_class($this))));
@@ -62,7 +63,7 @@ class AssetBundle
      */
     public function getWebAssetPath()
     {
-        return $this->config['webPath'] . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
+        return $this->config->webPath . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
     }
 
     /**

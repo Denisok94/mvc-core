@@ -3,6 +3,7 @@
 namespace LiteMvc\Core;
 
 use Exception, Throwable;
+use LiteMvc\Core\Config;
 use LiteMvc\Core\AssetBundle;
 use LiteMvc\Core\Component\Html;
 use denisok94\helper\Helper as H;
@@ -13,7 +14,7 @@ use denisok94\helper\Helper as H;
 class View
 {
     public $theme;
-    public array $config;
+    public Config $config;
     public string $class;
     public string $title;
     public array $metaTags = [];
@@ -23,7 +24,7 @@ class View
     public array $js = [];
     public array $jsFiles = [];
 
-    public function __construct(array $config, string $class)
+    public function __construct(Config $config, string $class)
     {
         $this->config = $config;
         $this->class = strtolower(str_replace('Controller', '', H::getClassName($class)));
@@ -31,12 +32,12 @@ class View
 
     public function getViewPath()
     {
-        return $this->config['viewPath'] . DIRECTORY_SEPARATOR . $this->class . DIRECTORY_SEPARATOR;
+        return $this->config->viewPath . DIRECTORY_SEPARATOR . $this->class . DIRECTORY_SEPARATOR;
     }
 
     public function getLayoutPath()
     {
-        return $this->config['viewPath'] . DIRECTORY_SEPARATOR . "layouts" . DIRECTORY_SEPARATOR;
+        return $this->config->viewPath . DIRECTORY_SEPARATOR . "layouts" . DIRECTORY_SEPARATOR;
     }
 
     /**
