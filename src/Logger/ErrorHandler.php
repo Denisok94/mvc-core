@@ -3,15 +3,15 @@
 namespace LiteMvc\Core\Logger;
 
 // Пример использования
-// ErrorLogger::init();
+// ErrorHandler::init();
 
 // Для отключения логирования (например, в тестах)
-// ErrorLogger::setEnabled(false);
+// ErrorHandler::setEnabled(false);
 
 /**
  * 
  */
-final class ErrorLogger
+final class ErrorHandler
 {
     private static $logFile = 'application.log';
     private static $enabled = true;
