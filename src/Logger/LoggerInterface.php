@@ -13,7 +13,8 @@ namespace LiteMvc\Core\Logger;
  * - Info(6) — для общих событий
  * - Debug(7) — для отладочной информации
  */
-interface LoggerInterface {
+interface LoggerInterface
+{
     public function emergency(string $message, array $context = []);
     public function alert(string $message, array $context = []);
     public function critical(string $message, array $context = []);

@@ -99,7 +99,7 @@ class BaseApiController extends BaseController
         if (isset($result['code'])) {
             http_response_code((int) $result['code']);
         } else {
-            http_response_code(ApiController::CODE_OK);
+            http_response_code(BaseApiController::CODE_OK);
         }
         $result = H::toJson($result);
         return parent::afterAction($action, $result);
@@ -122,7 +122,7 @@ class BaseApiController extends BaseController
      * return $this->sendResponse($data, $message, $status, 999); // 999
      * ```
      */
-    protected function sendResponse($data = [], string $message = '', string $status = 'OK', int $code = ApiController::CODE_OK)
+    protected function sendResponse($data = [], string $message = '', string $status = 'OK', int $code = BaseApiController::CODE_OK)
     {
         return [
             'code' => $code,
@@ -152,7 +152,7 @@ class BaseApiController extends BaseController
      * @param integer $code
      * @return array
      */
-    protected function sendError(string $message = 'Error', $data = [], int $code = ApiController::CODE_BAD_REQUEST)
+    protected function sendError(string $message = 'Error', $data = [], int $code = BaseApiController::CODE_BAD_REQUEST)
     {
         return [
             'code' => $code,

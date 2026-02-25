@@ -6,6 +6,7 @@ use Exception;
 use ReflectionMethod;
 use LiteMvc\Core\View;
 use LiteMvc\Core\Config;
+use LiteMvc\Core\MvcException;
 
 /**
  *
@@ -72,6 +73,8 @@ class BaseController
                         return $return;
                     }
                 }
+            } else {
+                throw new MvcException("action '$action' - method name '$methodName' not found.", 404);
             }
         }
 
@@ -90,9 +93,7 @@ class BaseController
     /**
      * @param string $action
      */
-    public function afterAction(string $action, &$result)
-    {
-    }
+    public function afterAction(string $action, &$result) {}
 
     /**
      * @param string $view the view name.

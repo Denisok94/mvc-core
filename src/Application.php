@@ -32,7 +32,7 @@ class Application
     public Request $request;
     protected ?string $sessionClass = null;
     protected string $controllerNamespace = 'app\\controllers';
-    protected string $controllerWebBese = 'site';
+    protected string $controllerWebBase = 'site';
     public $components = [];
     public $params = [];
 
@@ -58,18 +58,25 @@ class Application
      */
     public function initConfig()
     {
+        $logDir = $this->config->varPath . DIRECTORY_SEPARATOR . "log";
+        $logFile = $logDir . DIRECTORY_SEPARATOR . "application.log";
+        if (!file_exists($logDir)) {
+            @mkdir($logDir);
+        }
+        ErrorHandler::setFile($logFile);
         // env init
         $srcPath = $this->config->srcPath;
-        $dotenv = Dotenv\Dotenv::createImmutable($srcPath);
+        $dotenv = \Dotenv\Dotenv::createImmutable($srcPath);
         $dotenv->safeLoad();
         //
         $this->controllerNamespace = $this->config->controllerNamespace ?? $this->controllerNamespace;
-        $this->controllerWebBese = $this->config->controllerWebBese ?? $this->controllerWebBese;
+        $this->controllerWebBase = $this->config->controllerWebBase ?? $this->controllerWebBase;
         $this->params = $this->config->params ?? [];
     }
 
     // Инициализация компонентов
-    private function initComponents() {
+    private function initComponents()
+    {
         $this->components = $this->config->components ?? [];
         //
         $this->sessionClass = $this->components['session']['class'] ?? null;
@@ -83,10 +90,13 @@ class Application
         } else {
             $this->log = new MvcLogger();
         }
+
+        ErrorHandler::setEnabled(false);
     }
 
     // Получение компонента
-    public function getComponent($id) {
+    public function getComponent($id)
+    {
         return $this->components[$id] ?? null;
     }
 
@@ -100,7 +110,7 @@ class Application
 
         try {
             if (empty($alias[1])) {
-                $alias[1] = $this->controllerWebBese;
+                $alias[1] = $this->controllerWebBase;
             }
 
             if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $alias[1])) {
@@ -108,34 +118,39 @@ class Application
                 echo $this->controllerInt($class, $alias[2] ?? '');
             }
         } catch (MvcException $ex) {
-        } catch (Error| Throwable $th) {
+            http_response_code($ex->getCode());
+            echo $ex->getMessage();
+        } catch (Error | Throwable $th) {
             $class = $action = null;
             if (isset($this->components['errorHandler']['errorAction'])) {
                 $errorAction = $this->components['errorHandler']['errorAction'];
-                liset($class, $action) = explode('/', $errorAction);
+                list($class, $action) = explode('/', $errorAction);
                 echo $this->controllerInt($class, $action);
             } else {
                 echo $th->getMessage();
             }
-
-            //throw $th;
-        } finally {}
+        } finally {
+        }
 
         // echo "<br>";
         // printf($this->queryTimer);
     }
 
-    private function controllerInt($class, $action) {
+    private function controllerInt(string $class, $action = '')
+    {
         $class = $this->controllerNamespace . '\\' . $class . "Controller";
+        if (!class_exists($class)) {
+            throw new MvcException("Controller class '$class' not found.", 404);
+        }
         /** @var BaseController $controller */
         $controller = new $class();
         $controller->init($this->config);
-        return $controller->runAction($alias[2] ?? '');
+        return $controller->runAction($action);
     }
-    
+
     // Запрещаем клонирование объекта
-    private function __clone() {}
+    public function __clone() {}
 
     // Запрещаем восстановление объекта
-    private function __wakeup() {}
+    public function __wakeup() {}
 }

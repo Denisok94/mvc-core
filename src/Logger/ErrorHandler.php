@@ -2,6 +2,7 @@
 
 namespace LiteMvc\Core\Logger;
 
+use Throwable;
 // Пример использования
 // ErrorHandler::init();
 
@@ -19,14 +20,15 @@ final class ErrorHandler
     /**
      * Инициализация обработчиков ошибок
      */
-    public static function init() {
+    public static function init()
+    {
         if (!self::$enabled) {
             return;
         }
         self::configureErrorHandling();
         set_error_handler([__CLASS__, 'handleError']);
         set_exception_handler([__CLASS__, 'handleException']);
-        register_shutdown_function([__CLASS__, 'handleFatalError']); 
+        register_shutdown_function([__CLASS__, 'handleFatalError']);
         // Переопределяем стандартную функцию error_log
         if (function_exists('error_log')) {
             $GLOBALS['original_error_log'] = 'error_log';
@@ -34,7 +36,8 @@ final class ErrorHandler
         }
     }
 
-    public static  function errorLevelToString($errorLevel) {
+    public static  function errorLevelToString($errorLevel)
+    {
         $errorLevels = [
             E_ERROR => 'Ошибка выполнения',  // 1
             E_WARNING => 'Предупреждение', // 2
@@ -53,7 +56,7 @@ final class ErrorHandler
             E_USER_DEPRECATED => 'Пользовательское устаревание', // 16384
             E_ALL => "E_ALL", // 32767
         ];
-        
+
         // Возвращаем описание уровня или "Неизвестный уровень"
         return $errorLevels[$errorLevel] ?? 'Неизвестный уровень ошибки';
     }
@@ -61,7 +64,8 @@ final class ErrorHandler
     /**
      * Обработка обычных ошибок
      */
-    public static function handleError($errno, $errstr, $errfile, $errline) {
+    public static function handleError($errno, $errstr, $errfile, $errline)
+    {
         if (!self::$enabled) {
             return false;
         }
@@ -70,7 +74,7 @@ final class ErrorHandler
         }
 
         $error = [
-            'lavelName' => self::errorLevelToString($errno ),
+            'lavelName' => self::errorLevelToString($errno),
             'type' => $errno,
             'message' => $errstr,
             'file' => $errfile,
@@ -86,7 +90,8 @@ final class ErrorHandler
     /**
      * Обработка исключений
      */
-    public static function handleException(Throwable $exception) {
+    public static function handleException(Throwable $exception)
+    {
         if (!self::$enabled) {
             return;
         }
@@ -109,7 +114,8 @@ final class ErrorHandler
     /**
      * Обработка фатальных ошибок
      */
-    public static function handleFatalError() {
+    public static function handleFatalError()
+    {
         if (!self::$enabled) {
             return;
         }
@@ -122,18 +128,18 @@ final class ErrorHandler
             return true;
         }
     }
-    
+
     // Пользовательская реализация error_log
-    public static function customErrorLog($message, $message_type = 0, $destination = '', $extra_headers = '') {
+    public static function customErrorLog($message, $message_type = 0, $destination = '', $extra_headers = '')
+    {
         // Добавляем префикс к сообщению
         $formattedMessage = "Пользовательский лог: $message\n";
-        
+
         // Вызываем оригинальный error_log, если он существует
         if (isset($GLOBALS['original_error_log'])) {
             return call_user_func($GLOBALS['original_error_log'], $formattedMessage, $message_type, $destination, $extra_headers);
         }
-        
-        // Логируем в файл
+
         self::log($formattedMessage);
         return true;
     }
@@ -141,32 +147,33 @@ final class ErrorHandler
     /**
      * Запись ошибки в лог
      */
-    private static function log($error) {
+    private static function log($log)
+    {
         if (!self::$enabled) {
             return;
         }
+        $timestamp = date('c');
 
-        echo print_r([
-            'timestamp' => date('c'),
-            'error' => $error
-        ]) . "\n";
+        if (is_array($log)) {
+            // $log['timestamp'] = $timestamp;
+            $logMessage = json_encode($log, JSON_UNESCAPED_UNICODE);
+        } else if (is_string($log)) {
+            $logMessage = "[$timestamp] $log";
+        }
 
-        // $logMessage = json_encode([
-        //     'timestamp' => date('c'),
-        //     'error' => $error
-        // ]);
-        // file_put_contents(
-        //     self::$logFile,
-        //     $logMessage . PHP_EOL,
-        //     FILE_APPEND
-        // );
-
+        // echo print_r($logMessage) . "\n";
+        file_put_contents(
+            self::$logFile,
+            $logMessage . PHP_EOL,
+            FILE_APPEND
+        );
     }
 
     /**
-    * Получение контекста выполнения
-    */
-    private static function getContext() {
+     * Получение контекста выполнения
+     */
+    private static function getContext()
+    {
         $context = [
             'request_uri' => $_SERVER['REQUEST_URI'] ?? '',
             'request_method' => $_SERVER['REQUEST_METHOD'] ?? '',
@@ -178,19 +185,26 @@ final class ErrorHandler
     }
 
     /**
-    * Включение/отключение логирования
-    */
-    public static function setEnabled($enabled) {
+     * Включение/отключение логирования
+     */
+    public static function setEnabled($enabled)
+    {
         self::$enabled = (bool)$enabled;
     }
 
+    public static function setFile(string $file)
+    {
+        self::$logFile = $file;
+    }
+
     //---
-    
+
     // Функция для настройки уровня ошибок
-    public static function configureErrorHandling() {
+    public static function configureErrorHandling()
+    {
         // Определяем среду
         $env = getEnv();
-        
+
         switch ($env) {
             case 'dev':
             case 'development':
@@ -209,13 +223,15 @@ final class ErrorHandler
         }
     }
     // Определение среды
-    public static function  getEnv() {
+    public static function  getEnv()
+    {
         return getenv('APP_ENV') ?? 'development';
     }
 
 
-        // Разработка
-    public static function  setDevelopmentErrorLevel() {
+    // Разработка
+    public static function  setDevelopmentErrorLevel()
+    {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
@@ -224,7 +240,8 @@ final class ErrorHandler
     }
 
     // Тестирование
-    public static function  setTestingErrorLevel() {
+    public static function  setTestingErrorLevel()
+    {
         error_reporting(E_ALL);
         ini_set('display_errors', 0);
         ini_set('log_errors', 1);
@@ -232,7 +249,8 @@ final class ErrorHandler
     }
 
     // Продакшен
-    public static function  setProductionErrorLevel() {
+    public static function  setProductionErrorLevel()
+    {
         error_reporting(E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
         ini_set('display_errors', 0);
         ini_set('log_errors', 1);
@@ -240,7 +258,8 @@ final class ErrorHandler
     }
 
     // Настройки по умолчанию
-    public static function setDefaultErrorLevel() {
+    public static function setDefaultErrorLevel()
+    {
         error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
         ini_set('display_errors', 0);
         ini_set('log_errors', 1);

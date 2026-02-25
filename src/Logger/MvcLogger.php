@@ -8,17 +8,18 @@ use LiteMvc\Core\Logger\LoggerInterface;
  * https://www.php.net/manual/ru/network.constants.php
  * https://www.php-fig.org/psr/psr-3/
  */
-class MvcLogger implements LoggerInterface {
-    
-    public function log(string $level, string $message, array $context = []) {
+class MvcLogger implements LoggerInterface
+{
 
-    }
+    public function log(string $level, string $message, array $context = []) {}
 
-    public function emergency(string $message, array $context = []) {
+    public function emergency(string $message, array $context = [])
+    {
         // Логирование экстренных сообщений
     }
 
-    public function alert(string $message, array $context = []) {
+    public function alert(string $message, array $context = [])
+    {
         // Логирование критических оповещений
     }
 

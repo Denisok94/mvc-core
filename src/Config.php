@@ -9,6 +9,8 @@ use LiteMvc\Core\MvcException;
  */
 class Config
 {
+    public string $basePath, $webPath, $srcPath, $viewPath, $varPath;
+
     public array $config = [
         'id' => 'basic',
         'name' => 'Lite Mvc',
@@ -16,7 +18,7 @@ class Config
         'basePath' => false,
         'baseNamespace' => 'app',
         'controllerNamespace' => 'app\\controllers',
-        'controllerWebBese' => 'site',
+        'controllerWebBase' => 'site',
         'modules' => [],
         'components' => [
             'db' => [
@@ -62,7 +64,7 @@ class Config
         if (!$basePath) {
             $webIndex = $this->getParentFile();
             if ($webIndex) {
-                $basePath = dirname($webIndex, 1);
+                $basePath = dirname($webIndex, 2);
             }
         }
         if ($basePath) {
@@ -70,11 +72,12 @@ class Config
             $srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
             $this->srcPath = $srcPath;
             $this->viewPath = $srcPath . DIRECTORY_SEPARATOR . "views";
+            $this->varPath = $basePath . DIRECTORY_SEPARATOR . "var";
         } else {
             throw new MvcException("в файле конфига не указан 'basePath'", 100);
         }
     }
-    
+
     private function getParentFile()
     {
         $files = get_included_files();
@@ -93,7 +96,7 @@ class Config
     {
         $this->config[$property] = $value;
     }
-    
+
     /**
      * Получить значение свойство
      * @param string $property

@@ -18,7 +18,11 @@ class AssetBundle
     /**
      * @var string 
      */
-    public $class = [];
+    public $class = '';
+    /**
+     * @var string 
+     */
+    public $hashAsset = '';
     /**
      * @var string
      */
@@ -45,7 +49,7 @@ class AssetBundle
     public $cssOptions = [];
 
     /**
-     * файлы находяться в web папке
+     * файлы находятся в web папке
      * @var bool
      */
     public $is_web = false;
@@ -56,6 +60,8 @@ class AssetBundle
     {
         $this->config = $config;
         $this->class = strtolower(str_replace('Asset', '', H::getClassName(get_class($this))));
+
+        $this->hashAsset = hash('adler32', serialize([$this->class, $this->js, $this->css]), false);
     }
 
     /**
@@ -82,7 +88,7 @@ class AssetBundle
     public function registerAssetFiles(View $view)
     {
         $this->init();
-        $this->recurse_copy($this->basePath . DIRECTORY_SEPARATOR . $this->sourcePath, $this->getWebAssetPath() . $this->class);
+        $this->recurse_copy($this->basePath . DIRECTORY_SEPARATOR . $this->sourcePath, $this->getWebAssetPath() . $this->hashAsset);
 
         foreach ($this->js as $js) {
             $view->registerJsFile($this->getAssetUrl($js), $this->jsOptions);
@@ -92,9 +98,7 @@ class AssetBundle
         }
     }
 
-    public function init()
-    {
-    }
+    public function init() {}
 
     /**
      * @param string $asset
@@ -102,25 +106,27 @@ class AssetBundle
      */
     public function getAssetUrl(string $asset)
     {
-        return $this->is_web ? "/$asset" : "/assets/" . $this->class . "/$asset";
+        return $this->is_web ? "/$asset" : "/assets/" . $this->hashAsset . "/$asset";
     }
 
     /**
      *
-     * @param string $from
-     * @param string $dst
+     * @param string $from_asset
+     * @param string $to_asset
      */
-    public function recurse_copy(string $from, string $to)
+    public function recurse_copy(string $from_asset, string $to_asset)
     {
         if ($this->is_web) {
             return;
         }
-        $dir = opendir($from);
-        @mkdir($to);
+        $dir = opendir($from_asset);
+        if (!is_dir($to_asset)) {
+            @mkdir($to_asset);
+        }
         while (false !== ($file = readdir($dir))) {
             if (($file != '.') && ($file != '..')) {
-                $from .= '/' . $file;
-                $to .= '/' . $file;
+                $from = $from_asset . DIRECTORY_SEPARATOR . $file;
+                $to = $to_asset . DIRECTORY_SEPARATOR . $file;
                 if (is_dir($from)) {
                     $this->recurse_copy($from, $to);
                 } else {
