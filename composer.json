@@ -11,7 +11,7 @@
         "name": "Denisok94",
         "email": "denisok94@inbox.ru"
     }],
-    "version": "0.0.4",
+    "version": "0.1.0",
     "minimum-stability": "stable",
     "require": {
         "php": "7.4 || ^8.0 <8.4",
