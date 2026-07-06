@@ -18,9 +18,11 @@
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "denisok94/helper": ">=0.8.6",
+        "denisok94/helper": "^0.8.7",
         "wa72/url": "^0.7.0",
-        "vlucas/phpdotenv": "*"
+        "vlucas/phpdotenv": "*",
+        "psr/log": "^3.0",
+        "guzzlehttp/guzzle": "^7.13"
     },
     "config": {
         "allow-plugins": {
