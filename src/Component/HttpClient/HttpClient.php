@@ -1,8 +1,8 @@
 <?php
 
-namespace LiteMvc\Core\Component\HttpClient;
-
 declare(strict_types=1);
+
+namespace LiteMvc\Core\Component\HttpClient;
 
 use stdClass;
 use GuzzleHttp\Client;
@@ -55,7 +55,7 @@ class HttpClient implements HttpClientInterface
     }
 
     /**
-     * SOCKS5 Proxy     * 
+     * SOCKS5 Proxy
      * @param string $host Хост SOCKS5 прокси (например, '10.10.10.10')
      * @param int $port Порт SOCKS5 прокси (например, 1080)
      * @param ?string $user Пользователь прокси
@@ -68,7 +68,7 @@ class HttpClient implements HttpClientInterface
         $proxyUrl = sprintf('socks5://%s:%d', $host, $port);
         if ($user && $pass) {
             $proxyUrl = sprintf(
-                'socks5://%s:%s@%s:%d',
+                'socks5h://%s:%s@%s:%d',
                 urlencode($user),
                 urlencode($pass),
                 $host,

@@ -2,7 +2,7 @@
 
 ## Установка
 
-Добавиьт репозиторий в секцию `repositories` файла `composer.json`:
+Добавить репозиторий в секцию `repositories` файла `composer.json`:
 ```json
     "repositories": [
         {"type": "git", "url": "https://github.com/Denisok94/mvc-core.git"}
