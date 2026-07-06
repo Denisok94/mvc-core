@@ -28,9 +28,9 @@ class Config
                 // 'password' => '',
                 // 'charset' => 'utf8',
             ],
-            'session' => [
-                'class' => 'LiteMvc\Core\Component\Session',
-            ],
+            // 'session' => [
+            //     'class' => 'LiteMvc\Core\Component\Session',
+            // ],
             // todo:
             'log' => [
                 'class' => 'LiteMvc\Core\Logger\MvcLogger',
@@ -66,6 +66,7 @@ class Config
             if ($webIndex) {
                 $basePath = dirname($webIndex, 2);
             }
+            $this->basePath = $basePath;
         }
         if ($basePath) {
             $this->webPath = $basePath . DIRECTORY_SEPARATOR . "web";

@@ -25,9 +25,7 @@ class Application
      */
     public $log;
     public Url $url;
-    /**
-     * @var Session|null
-     */
+    // /** @var Session|null */
     public $session = null;
     public Request $request;
     protected ?string $sessionClass = null;
@@ -56,7 +54,7 @@ class Application
     /**
      *
      */
-    public function initConfig()
+    private function initConfig()
     {
         $logDir = $this->config->varPath . DIRECTORY_SEPARATOR . "log";
         $logFile = $logDir . DIRECTORY_SEPARATOR . "application.log";
@@ -65,8 +63,7 @@ class Application
         }
         ErrorHandler::setFile($logFile);
         // env init
-        $srcPath = $this->config->srcPath;
-        $dotenv = \Dotenv\Dotenv::createImmutable($srcPath);
+        $dotenv = \Dotenv\Dotenv::createImmutable($this->config->basePath);
         $dotenv->safeLoad();
         //
         $this->controllerNamespace = $this->config->controllerNamespace ?? $this->controllerNamespace;
@@ -127,7 +124,7 @@ class Application
                 list($class, $action) = explode('/', $errorAction);
                 echo $this->controllerInt($class, $action);
             } else {
-                echo $th->getMessage();
+                echo sprintf("%s(%s:%s)", $th->getMessage(), $th->getFile(), $th->getLine());
             }
         } finally {
         }
