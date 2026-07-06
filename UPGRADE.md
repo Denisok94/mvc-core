@@ -19,3 +19,14 @@ use LiteMvc\Core\Controller\ApiController → BaseApiController
 // src\console:
 use LiteMvc\Core\Controller\ConsoleController → BaseConsoleController
 ```
+config не массив а объект:
+```php
+$this->config['name'] → $this->config->name
+```
+получить данные запроса через глобальный класс Mvc
+```php
+$rawBody = $this->request->rawBody
+→
+use LiteMvc\Core\Mvc;
+$rawBody = Mvc::$app->request->rawBody
+```

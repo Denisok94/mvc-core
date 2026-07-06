@@ -59,7 +59,7 @@ class Application
         $logDir = $this->config->varPath . DIRECTORY_SEPARATOR . "log";
         $logFile = $logDir . DIRECTORY_SEPARATOR . "application.log";
         if (!file_exists($logDir)) {
-            @mkdir($logDir);
+            @mkdir($logDir, 0755, true);
         }
         ErrorHandler::setFile($logFile);
         // env init
