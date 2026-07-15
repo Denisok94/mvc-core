@@ -10,11 +10,13 @@ use LiteMvc\Core\MvcException;
 use LiteMvc\Core\Component\Session;
 use LiteMvc\Core\Component\Request;
 use LiteMvc\Core\Controller\BaseController;
+use LiteMvc\Core\Controller\BaseConsoleController;
 use LiteMvc\Core\Logger\MvcLogger;
 use LiteMvc\Core\Logger\LoggerInterface;
 use LiteMvc\Core\Logger\ErrorHandler;
 use Wa72\Url\Url;
 use denisok94\helper\other\MicroTimer;
+use denisok94\helper\other\Console;
 
 class Application
 {
@@ -30,6 +32,7 @@ class Application
     public Request $request;
     protected ?string $sessionClass = null;
     protected string $controllerNamespace = 'app\\controllers';
+    protected string $consoleNamespace = 'app\\commands';
     protected string $controllerWebBase = 'site';
     public $components = [];
     public $params = [];
@@ -131,6 +134,40 @@ class Application
 
         // echo "<br>";
         // printf($this->queryTimer);
+    }
+
+    /**
+     * @return void
+     */
+    public function runConsole()
+    {
+        Mvc::$app = $this;
+        try {
+            $console = new Console();
+
+            if ($alias = $console->getArgument(0)) {
+
+                if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $alias)) {
+                    $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $alias)));
+
+                    $class = $this->consoleNamespace . '\\' . $class . "Controller";
+                    if (!class_exists($class)) {
+                        throw new MvcException("console controller class '$class' not found.", 404);
+                    }
+                    /** @var BaseConsoleController $controller */
+                    $controller = new $class();
+                    $controller->init($this->config)
+                        ->execute();
+                }
+            } else {
+                throw new MvcException("не указано имя контроллера 'php LiteMvc.php {consoleController}'", 404);
+            }
+        } catch (MvcException $ex) {
+            echo "\r" . $ex->getMessage();
+        } catch (Error | Throwable $th) {
+            throw $th;
+        } finally {
+        }
     }
 
     private function controllerInt(string $class, $action = '')

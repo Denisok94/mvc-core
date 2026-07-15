@@ -11,7 +11,7 @@ use LiteMvc\Core\MvcException;
 /**
  *
  */
-class BaseController
+abstract class BaseController
 {
     /**
      * @var View
