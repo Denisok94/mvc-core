@@ -8,7 +8,7 @@ use stdClass;
 use Psr\Log\LoggerInterface;
 
 /**
- * Guzzle-based HttpClientProxy implementing HttpClientInterface.
+ * Guzzle-based HttpClientAuthorization implementing HttpClientInterface.
  *
  * Поддерживает:
  * - SOCKS5 прокси с авторизацией
@@ -19,14 +19,14 @@ use Psr\Log\LoggerInterface;
  * @example 
  * ```php
  * // API‑авторизация
- * $client = new HttpClientProxy(
+ * $client = new HttpClientAuthorization(
  *  $apiUrl,
  *  'api_user',      // Basic user
  *  'api_pass',      // Basic pass
  *  null             // без токена
  * );
  * // Bearer 
- * $client = new HttpClientProxy(
+ * $client = new HttpClientAuthorization(
  *  $apiUrl,
  *  null,            // без Basic
  *  null,
@@ -34,7 +34,7 @@ use Psr\Log\LoggerInterface;
  * );
  * ```
  */
-class HttpClientProxy extends HttpClient
+class HttpClientAuthorization extends HttpClient
 {
     private ?string $user;
     private ?string $password;

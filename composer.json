@@ -18,7 +18,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "denisok94/helper": "^0.8.7",
+        "denisok94/helper": "^0.8",
         "wa72/url": "^0.7.0",
         "vlucas/phpdotenv": "*",
         "psr/log": "^3.0",
