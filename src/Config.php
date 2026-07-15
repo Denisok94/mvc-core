@@ -69,11 +69,10 @@ class Config
             $this->basePath = $basePath;
         }
         if ($basePath) {
-            $this->webPath = $basePath . DIRECTORY_SEPARATOR . "web";
-            $srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
-            $this->srcPath = $srcPath;
-            $this->viewPath = $srcPath . DIRECTORY_SEPARATOR . "views";
             $this->varPath = $basePath . DIRECTORY_SEPARATOR . "var";
+            $this->webPath = $basePath . DIRECTORY_SEPARATOR . "web";
+            $this->srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
+            $this->viewPath = $this->srcPath . DIRECTORY_SEPARATOR . "views";
         } else {
             throw new MvcException("в файле конфига не указан 'basePath'", 100);
         }
