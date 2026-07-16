@@ -82,7 +82,7 @@ class Application
     private function initConfig()
     {
         $logDir = $this->config->varPath . DIRECTORY_SEPARATOR . "log";
-        $logFile = $logDir . DIRECTORY_SEPARATOR . "application.log";
+        $logFile = $logDir . DIRECTORY_SEPARATOR . date("Y-m-d") . "_application.log";
         if (!file_exists($logDir)) {
             @mkdir($logDir, 0755, true);
         }
