@@ -55,16 +55,18 @@ class Application
     public function __construct($config = [])
     {
         ErrorHandler::init();
-        $this->initEnv();
         $this->queryTimer = new MicroTimer();
         $this->config = new Config($config);
+        //
         $this->initConfig();
+        $this->initEnv();
         $this->initComponents();
         //
         if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI'])) {
             $this->request = new Request();
-            $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-            $this->url = new Url($url);
+            $this->url = new Url(
+                (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+            );
         }
     }
 
@@ -122,7 +124,6 @@ class Application
      */
     public function run()
     {
-        Mvc::$app = $this;
         $alias = explode('/', $this->url->getPath());
 
         try {
@@ -158,7 +159,6 @@ class Application
      */
     public function runConsole()
     {
-        Mvc::$app = $this;
         try {
             $console = new Console();
 
