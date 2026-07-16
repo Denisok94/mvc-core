@@ -10,25 +10,6 @@ use LiteMvc\Core\Logger\LoggerInterface;
  */
 class MvcLogger implements LoggerInterface
 {
-    public string $format = "{level} - {message} {context}";
-
-    /**
-     * Interpolates context values into the message placeholders.
-     */
-    private function interpolate(string $format, array $context = []): string
-    {
-        // build a replacement array with braces around the context keys
-        $replace = [];
-        foreach ($context as $key => $val) {
-            // check that the value can be cast to string
-            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
-                $replace['{' . $key . '}'] = $val;
-            }
-        }
-        // interpolate replacement values into the message and return
-        return strtr($format, $replace);
-    }
-
     /**
      * @param string $level
      * @param string $message
@@ -41,13 +22,11 @@ class MvcLogger implements LoggerInterface
             $message = sprintf("%s(%s:%s)", $message->getMessage(), $message->getFile(), $message->getLine());
             // $context[] = $massage->getTrace();
         }
-
-        error_log($this->interpolate($this->format, [
-            // 'date_time' => date('Y-m-d\TH:i:s.u\Z'),
+        ErrorHandler::customErrorLog([
             'level' => $level,
             'message' => $message,
-            'context' => $context ? json_encode($context, JSON_UNESCAPED_UNICODE) : '',
-        ]));
+            'context' => $context,
+        ]);
     }
 
     /**

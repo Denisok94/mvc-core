@@ -46,12 +46,14 @@ class Application
         ErrorHandler::init();
         $this->queryTimer = new MicroTimer();
         $this->config = new Config($config);
-        $this->request = new Request();
         $this->initConfig();
+        $this->request = new Request();
         $this->initComponents();
         //
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        $this->url = new Url($url);
+        if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI'])) {
+            $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $this->url = new Url($url);
+        }
     }
 
     /**

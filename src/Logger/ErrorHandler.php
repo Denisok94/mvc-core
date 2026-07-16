@@ -3,6 +3,7 @@
 namespace LiteMvc\Core\Logger;
 
 use Throwable;
+use LiteMvc\Core\Logger\LodModel;
 // Пример использования
 // ErrorHandler::init();
 
@@ -15,6 +16,7 @@ use Throwable;
 final class ErrorHandler
 {
     private static $logFile = 'application.log';
+    private static $format = "[{datetime}] {level} - {message} {context} {extra}";
     private static $enabled = true;
 
     /**
@@ -29,11 +31,23 @@ final class ErrorHandler
         set_error_handler([__CLASS__, 'handleError']);
         set_exception_handler([__CLASS__, 'handleException']);
         register_shutdown_function([__CLASS__, 'handleFatalError']);
-        // Переопределяем стандартную функцию error_log
-        if (function_exists('error_log')) {
-            $GLOBALS['original_error_log'] = 'error_log';
-            $GLOBALS['error_log'] = [__CLASS__, 'customErrorLog'];
+    }
+
+    private static function phpErrorLevelToPsrLevel(int $errno): string
+    {
+        if ($errno & E_RECOVERABLE_ERROR) {
+            return 'critical';
         }
+        if ($errno & (E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR)) {
+            return 'error';
+        }
+        if ($errno & (E_WARNING | E_CORE_WARNING | E_COMPILE_WARNING | E_USER_WARNING)) {
+            return 'warning';
+        }
+        if ($errno & (E_NOTICE | E_USER_NOTICE)) {
+            return 'notice';
+        }
+        return 'debug';
     }
 
     public static  function errorLevelToString($errorLevel)
@@ -61,6 +75,30 @@ final class ErrorHandler
         return $errorLevels[$errorLevel] ?? 'Неизвестный уровень ошибки';
     }
 
+    private static function psrLevelFromException(string $class): string
+    {
+        if (str_contains($class, 'NotFound')) {
+            return 'notice';
+        }
+
+        if ($class === \RuntimeException::class) {
+            return 'error';
+        }
+        if ($class === \InvalidArgumentException::class) {
+            return 'warning';
+        }
+        if ($class === \LogicException::class) {
+            return 'error';
+        }
+
+        // Ошибки движка
+        if (is_subclass_of($class, \Error::class)) {
+            return 'critical';
+        }
+
+        return 'error'; // fallback
+    }
+
     /**
      * Обработка обычных ошибок
      */
@@ -73,15 +111,14 @@ final class ErrorHandler
             return false;
         }
 
-        $error = [
-            'levelName' => self::errorLevelToString($errno),
-            'type' => $errno,
-            'message' => $errstr,
-            'file' => $errfile,
-            'line' => $errline,
-            'time' => date('Y-m-d H:i:s'),
-            'context' => self::getContext()
-        ];
+        $error = (new LodModel())
+            ->setLevel(self::phpErrorLevelToPsrLevel($errno))
+            ->setMessage($errstr)
+            ->setContext([
+                'file' => $errfile,
+                'line' => $errline,
+            ])
+            ->setExtra(self::getExtra());
 
         self::log($error);
         return true;
@@ -96,16 +133,16 @@ final class ErrorHandler
             return;
         }
 
-        $error = [
-            'levelName' => '',
-            'type' => get_class($exception),
-            'message' => $exception->getMessage(),
-            'file' => $exception->getFile(),
-            'line' => $exception->getLine(),
-            'trace' => $exception->getTrace(),
-            'time' => date('Y-m-d H:i:s'),
-            'context' => self::getContext()
-        ];
+        $error = (new LodModel())
+            ->setLevel(self::psrLevelFromException(get_class($exception)))
+            ->setMessage($exception->getMessage())
+            ->setContext([
+                'type' => get_class($exception),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => $exception->getTrace(),
+            ])
+            ->setExtra(self::getExtra());
 
         self::log($error);
         return true;
@@ -120,52 +157,94 @@ final class ErrorHandler
             return;
         }
 
-        $error = error_get_last();
-        if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-            $error['time'] = date('Y-m-d H:i:s');
-            $error['context'] = self::getContext();
+        $error_last = error_get_last();
+        if ($error_last) {
+            $error = (new LodModel())->setMessage($error_last['message'])
+                ->setLevel(self::phpErrorLevelToPsrLevel($error_last['type'] ?? E_ERROR))
+                ->setContext([
+                    'file' => $error_last['file'],
+                    'line' => $error_last['line'],
+                ])
+                ->setExtra(self::getExtra());
             self::log($error);
             return true;
         }
     }
 
-    // Пользовательская реализация error_log
+    /**
+     * Пользовательская реализация error_log
+     * @param string|array|Throwable $message
+     * @param mixed $message_type
+     * @param mixed $destination
+     * @param mixed $extra_headers
+     * @return bool
+     */
     public static function customErrorLog($message, $message_type = 0, $destination = '', $extra_headers = '')
     {
-        // Добавляем префикс к сообщению
-        // $formattedMessage = "Пользовательский лог: $message\n";
-        $formattedMessage = $message;
-
-        // Вызываем оригинальный error_log, если он существует
-        if (isset($GLOBALS['original_error_log'])) {
-            return call_user_func($GLOBALS['original_error_log'], $formattedMessage, $message_type, $destination, $extra_headers);
+        $error = new LodModel();
+        if ($message instanceof Throwable) {
+            $error->setLevel(self::psrLevelFromException(get_class($message)));
+            $error->setMessage($message->getMessage());
+            $error->setContext([
+                'file' => $message->getFile(),
+                'line' => $message->getLine(),
+                'code' => $message->getCode(),
+            ]);
+            $error->setExtra($message->getTrace());
+            //
+        } else if (is_array($message)) {
+            $error->setDatetime($message['datetime'] ?? $message['date_time'] ?? $message['date'] ?? $message['time'] ?? $message['dt'] ?? $error->getDatetime());
+            $error->setLevel($message['level'] ?? $message['level_name'] ?? $message['lvl'] ?? $message['type'] ?? '');
+            $error->setMessage($message['message'] ?? $message['msg'] ?? $message['text'] ?? '');
+            $error->setContext($message['context'] ?? $message['cont'] ?? []);
+            $error->setExtra($message['extra'] ?? $message['ext'] ?? []);
+            //
+        } else if (is_string($message) || method_exists($message, '__toString')) {
+            $error->setMessage($message);
+        } else {
+            try {
+                $error->setMessage($message);
+            } catch (Throwable $th) {
+                $error->setMessage('Не удаётся конвертировать сообщение лога в строку: ' . $th->getMessage());
+            }
         }
-
-        self::log($formattedMessage);
+        self::log($error);
         return true;
     }
 
     /**
-     * Запись ошибки в лог
+     * Interpolates context values into the message placeholders.
      */
-    private static function log($log)
+    private static function interpolate(string $format, array $context = []): string
+    {
+        // build a replacement array with braces around the context keys
+        $replace = [];
+        foreach ($context as $key => $val) {
+            // check that the value can be cast to string
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace['{' . $key . '}'] = $val;
+            } else {
+                $replace['{' . $key . '}'] = $val ? json_encode($val, JSON_UNESCAPED_UNICODE) : '';
+            }
+        }
+        // interpolate replacement values into the message and return
+        return strtr($format, $replace);
+    }
+
+    /**
+     * Запись ошибки в лог
+     * @param LodModel $logMessage
+     * @return void
+     */
+    private static function log(LodModel $logMessage)
     {
         if (!self::$enabled) {
             return;
         }
-        $timestamp = date('c');
 
-        if (is_array($log)) {
-            // $log['timestamp'] = $timestamp;
-            $logMessage = json_encode($log, JSON_UNESCAPED_UNICODE);
-        } else if (is_string($log)) {
-            $logMessage = "[$timestamp] $log";
-        }
-
-        // echo print_r($logMessage) . "\n";
         file_put_contents(
             self::$logFile,
-            $logMessage . PHP_EOL,
+            self::interpolate(self::$format, $logMessage->getArray()) . PHP_EOL,
             FILE_APPEND
         );
     }
@@ -173,7 +252,7 @@ final class ErrorHandler
     /**
      * Получение контекста выполнения
      */
-    private static function getContext()
+    private static function getExtra()
     {
         $context = [
             'request_uri' => $_SERVER['REQUEST_URI'] ?? '',
@@ -198,9 +277,17 @@ final class ErrorHandler
         self::$logFile = $file;
     }
 
+    public static function getLogFile(): string
+    {
+        return self::$logFile;
+    }
+
     //---
 
-    // Функция для настройки уровня ошибок
+    /**
+     * Функция для настройки уровня ошибок
+     * @return void
+     */
     public static function configureErrorHandling()
     {
         // Определяем среду
@@ -223,15 +310,16 @@ final class ErrorHandler
                 self::setDefaultErrorLevel();
         }
     }
+
     // Определение среды
-    public static function  getEnv()
+    public static function getEnv()
     {
         return getenv('APP_ENV') ?? 'development';
     }
 
 
     // Разработка
-    public static function  setDevelopmentErrorLevel()
+    public static function setDevelopmentErrorLevel()
     {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
@@ -241,7 +329,7 @@ final class ErrorHandler
     }
 
     // Тестирование
-    public static function  setTestingErrorLevel()
+    public static function setTestingErrorLevel()
     {
         error_reporting(E_ALL);
         ini_set('display_errors', 0);
@@ -250,7 +338,7 @@ final class ErrorHandler
     }
 
     // Продакшен
-    public static function  setProductionErrorLevel()
+    public static function setProductionErrorLevel()
     {
         error_reporting(E_ERROR | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR);
         ini_set('display_errors', 0);
