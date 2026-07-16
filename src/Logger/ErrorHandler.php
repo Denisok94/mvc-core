@@ -272,9 +272,12 @@ final class ErrorHandler
         self::$enabled = (bool)$enabled;
     }
 
-    public static function setFile(string $file)
+    public static function setFile(string $logFile)
     {
-        self::$logFile = $file;
+        if (!file_exists($logFile)) {
+            file_put_contents($logFile, '');
+        }
+        self::$logFile = $logFile;
     }
 
     public static function getLogFile(): string
