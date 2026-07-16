@@ -74,7 +74,7 @@ final class ErrorHandler
         }
 
         $error = [
-            'lavelName' => self::errorLevelToString($errno),
+            'levelName' => self::errorLevelToString($errno),
             'type' => $errno,
             'message' => $errstr,
             'file' => $errfile,
@@ -97,7 +97,7 @@ final class ErrorHandler
         }
 
         $error = [
-            'lavelName' => '',
+            'levelName' => '',
             'type' => get_class($exception),
             'message' => $exception->getMessage(),
             'file' => $exception->getFile(),
@@ -133,7 +133,8 @@ final class ErrorHandler
     public static function customErrorLog($message, $message_type = 0, $destination = '', $extra_headers = '')
     {
         // Добавляем префикс к сообщению
-        $formattedMessage = "Пользовательский лог: $message\n";
+        // $formattedMessage = "Пользовательский лог: $message\n";
+        $formattedMessage = $message;
 
         // Вызываем оригинальный error_log, если он существует
         if (isset($GLOBALS['original_error_log'])) {
