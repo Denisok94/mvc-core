@@ -47,10 +47,10 @@ class Application
         $this->queryTimer = new MicroTimer();
         $this->config = new Config($config);
         $this->initConfig();
-        $this->request = new Request();
         $this->initComponents();
         //
         if (isset($_SERVER['HTTP_HOST']) && isset($_SERVER['REQUEST_URI'])) {
+            $this->request = new Request();
             $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $this->url = new Url($url);
         }
@@ -93,7 +93,7 @@ class Application
             $this->log = new MvcLogger();
         }
 
-        ErrorHandler::setEnabled(false);
+        // ErrorHandler::setEnabled(false);
     }
 
     // Получение компонента
