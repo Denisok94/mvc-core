@@ -2,6 +2,9 @@
 
 namespace LiteMvc\Core\Component;
 
+/**
+ * Генератор Html тегов
+ */
 class Html
 {
     /**

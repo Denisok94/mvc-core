@@ -9,11 +9,16 @@ use LiteMvc\Core\Component\Html;
 use denisok94\helper\Helper as H;
 
 /**
- *
+ * Шаблонизатор, собирает всё в единое целое
+ * @property string $title Заголовок страницы
+ * @property string|null $theme тема (в разработке)
+ * @property Config $config информация о конфигурации приложения
+ * 
+ * @method string render(string $view, $params = []) рендер шаблона и передача в него параметров
  */
 class View
 {
-    public $theme;
+    public ?string $theme = null;
     public Config $config;
     public string $class;
     public string $title;

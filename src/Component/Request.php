@@ -3,13 +3,20 @@
 namespace LiteMvc\Core\Component;
 
 /**
- *
+ * @property string $rawBody оригинал запроса
+ * 
+ * @method string getMethod()
+ * @method mixed get(string $name, $default = null) 
+ * 
+ * ```php
+ * //запрос - localhost/user.php?id=Qashbs36e
+ * echo Mvc::$app->request->id;
+ * ```
  */
 class Request
 {
     /**
      * @var array
-     * переменная хранящая данные GET и POST
      */
     private $storage;
 
@@ -29,17 +36,27 @@ class Request
     }
 
     /**
-     * магическая функция, которая позволяет обращатья к GET и POST переменным
-     * по имени, например,
-     * запрос - myrusakov.ru/user.php?id=Qashbs36e
-     * в коде - echo $request->id
+     * магическая функция, которая позволяет обращаться к переменным
+     * @param string $name
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        if (isset($this->storage[$name])) return $this->storage[$name];
+        return $this->storage[$name] ?? null;
     }
 
-    public function getMethod()
+    /**
+     * Получить значение переменной
+     * @param string $name
+     * @param mixed $default
+     * @return mixed|null
+     */
+    public function get(string $name, $default = null)
+    {
+        return $this->storage[$name] ?? $default;
+    }
+
+
+    public function getMethod(): string
     {
         return $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
@@ -64,7 +81,7 @@ class Request
      * возвращаем содержимое хранилища
      * @return array
      */
-    public function getRequestEntries()
+    public function getRequestEntries(): array
     {
         return $this->storage;
     }

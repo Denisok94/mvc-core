@@ -9,7 +9,14 @@ use LiteMvc\Core\Config;
 use LiteMvc\Core\MvcException;
 
 /**
- *
+ * @property Config $config информация о конфигурации приложения
+ * @property View $view шаблонизатор
+ * 
+ * @method bool beforeAction(string $action) обработать запрос до выполнения кода в action
+ * @method void afterAction(string $action) обработать/доработать/дополнить ответ/результат action
+ * @method string render(string $view, $params = []) рендер шаблона
+ * 
+ * @method array actions() ограничение доступа (в разработке)
  */
 abstract class BaseController
 {
@@ -40,7 +47,7 @@ abstract class BaseController
     /**
      * todo
      */
-    public function actions()
+    public function actions(): array
     {
         return [];
     }

@@ -5,7 +5,13 @@ namespace LiteMvc\Core;
 use LiteMvc\Core\MvcException;
 
 /**
- * 
+ * @property array $config
+ * @property string $basePath корневой каталог
+ * @property string $webPath веб папка 
+ * @property string $srcPath src папка 
+ * @property string $viewPath веб папка 
+ * @property string $varPath var папка 
+ * @method mixed get($property, $default = null) Получить значение свойство конфигурации
  */
 class Config
 {
@@ -121,5 +127,16 @@ class Config
     public function __get($property)
     {
         return $this->config[$property] ?? null;
+    }
+
+    /**
+     * Получить значение свойство
+     * @param mixed $property
+     * @param mixed $default
+     * @return mixed|null
+     */
+    public function get($property, $default = null)
+    {
+        return $this->config[$property] ?? $default;
     }
 }

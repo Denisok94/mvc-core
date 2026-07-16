@@ -18,6 +18,17 @@ use Wa72\Url\Url;
 use denisok94\helper\other\MicroTimer;
 use denisok94\helper\other\Console;
 
+/**
+ * @property Config $config информация о конфигурации приложения
+ * @property MvcLogger|LoggerInterface $log отправить сообщение в лог
+ * @property Request $request получить данные запроса
+ * @property array $components компоненты приложения (в разработке)
+ * @property array $params параметры (в разработке)
+ * @property MicroTimer $queryTimer информация о времени выполнения кода
+ * 
+ * @method void run() запуск веб версии приложения
+ * @method void runConsole() запуск консольной версии приложения
+ */
 class Application
 {
     public Config $config;
@@ -44,6 +55,7 @@ class Application
     public function __construct($config = [])
     {
         ErrorHandler::init();
+        $this->initEnv();
         $this->queryTimer = new MicroTimer();
         $this->config = new Config($config);
         $this->initConfig();
@@ -54,6 +66,12 @@ class Application
             $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $this->url = new Url($url);
         }
+    }
+
+    private function initEnv()
+    {
+        $dotenv = \Dotenv\Dotenv::createImmutable($this->config->basePath);
+        $dotenv->safeLoad();
     }
 
     /**
@@ -67,9 +85,6 @@ class Application
             @mkdir($logDir, 0755, true);
         }
         ErrorHandler::setFile($logFile);
-        // env init
-        $dotenv = \Dotenv\Dotenv::createImmutable($this->config->basePath);
-        $dotenv->safeLoad();
         //
         $this->controllerNamespace = $this->config->controllerNamespace ?? $this->controllerNamespace;
         $this->controllerWebBase = $this->config->controllerWebBase ?? $this->controllerWebBase;

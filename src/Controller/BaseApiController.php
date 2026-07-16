@@ -48,6 +48,7 @@ use denisok94\helper\Helper as H;
  * return $this->send([]); // 200
  * return $this->send(['code' => 204]); // 204
  * return $this->send(['code' => 201, 'data' => $data]); // 201
+ * ```
  */
 class BaseApiController extends BaseController
 {

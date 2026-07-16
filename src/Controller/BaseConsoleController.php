@@ -3,19 +3,27 @@
 namespace LiteMvc\Core\Controller;
 
 use Exception;
-use ReflectionMethod;
-use LiteMvc\Core\View;
 use LiteMvc\Core\Config;
 use LiteMvc\Core\MvcException;
 use denisok94\helper\other\Console;
 
 /**
- * todo
+ * @property Config $config информация о конфигурации приложения
+ * @property array $requiredOptions перечень обязательных опций для команды
+ * @property array $requiredArguments перечень обязательных параметров/аргументов для команды
+ * 
+ * @method void execute() тут выполняемый код
+ * @method array getArguments()
+ * @method bool hasArgument($name)
+ * @method mixed getArgument($name, $default = null)
+ * @method array getOptions()
+ * @method bool hasOption($name)
+ * @method mixed getOption($name, $default = null)
  */
 abstract class BaseConsoleController extends Console
 {
-    public $requiredOptions = [];
-    public $requiredArguments = [];
+    public array $requiredOptions = [];
+    public array $requiredArguments = [];
 
     public Config $config;
     public Console $console;
