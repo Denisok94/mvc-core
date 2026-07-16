@@ -60,15 +60,17 @@ class Config
     {
         $this->config = array_merge($this->config, $app_config);
 
-        $basePath = $this->basePath ?? false;
+        $basePath = $this->config['basePath'] ?? false;
         if (!$basePath) {
             $webIndex = $this->getParentFile();
             if ($webIndex) {
                 $basePath = dirname($webIndex, 2);
             }
-            $this->basePath = $basePath;
+        } else {
+            $basePath = $this->getLvl($basePath);
         }
         if ($basePath) {
+            $this->basePath = $basePath;
             $this->varPath = $basePath . DIRECTORY_SEPARATOR . "var";
             $this->webPath = $basePath . DIRECTORY_SEPARATOR . "web";
             $this->srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
@@ -85,6 +87,21 @@ class Config
             return $files[0];
         }
         return false;
+    }
+
+    private function getLvl(string $basePath): string
+    {
+        $srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
+        $levels = 1;
+        while (!is_dir($srcPath)) {
+            $basePath = dirname($basePath, $levels);
+            $srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
+            if ($levels > 5) {
+                throw new MvcException("в файле конфига не указан 'basePath'", 100);
+            }
+            $levels++;
+        }
+        return $basePath;
     }
 
     /**
