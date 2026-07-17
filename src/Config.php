@@ -8,14 +8,14 @@ use LiteMvc\Core\MvcException;
  * @property array $config
  * @property string $basePath корневой каталог
  * @property string $webPath веб папка 
- * @property string $srcPath src папка 
+ * @property string $appPath папка приложения 
  * @property string $viewPath веб папка 
  * @property string $varPath var папка 
  * @method mixed get($property, $default = null) Получить значение свойство конфигурации
  */
 class Config
 {
-    public string $basePath, $webPath, $srcPath, $viewPath, $varPath;
+    public string $basePath, $webPath, $appPath, $viewPath, $varPath;
 
     public array $config = [
         'id' => 'basic',
@@ -24,6 +24,7 @@ class Config
         'basePath' => false,
         'baseNamespace' => 'app',
         'controllerNamespace' => 'app\\controllers',
+        'consoleNamespace' => 'app\\commands',
         'controllerWebBase' => 'site',
         'modules' => [],
         'components' => [
@@ -33,6 +34,7 @@ class Config
                 // 'username' => 'root',
                 // 'password' => '',
                 // 'charset' => 'utf8',
+                // 'dsn' => 'sqlite:' . __DIR__ . "/../db/user.db",
             ],
             // 'session' => [
             //     'class' => 'LiteMvc\Core\Component\Session',
@@ -73,14 +75,14 @@ class Config
                 $basePath = dirname($webIndex, 2);
             }
         } else {
-            $basePath = $this->getLvl($basePath);
+            $basePath = $this->getAddDir($basePath);
         }
         if ($basePath) {
             $this->basePath = $basePath;
             $this->varPath = $basePath . DIRECTORY_SEPARATOR . "var";
             $this->webPath = $basePath . DIRECTORY_SEPARATOR . "web";
-            $this->srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
-            $this->viewPath = $this->srcPath . DIRECTORY_SEPARATOR . "views";
+            $this->appPath = $basePath . DIRECTORY_SEPARATOR . "app";
+            $this->viewPath = $this->appPath . DIRECTORY_SEPARATOR . "views";
         } else {
             throw new MvcException("в файле конфига не указан 'basePath'", 100);
         }
@@ -95,13 +97,13 @@ class Config
         return false;
     }
 
-    private function getLvl(string $basePath): string
+    private function getAddDir(string $basePath): string
     {
-        $srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
+        $appPath = $basePath . DIRECTORY_SEPARATOR . "app";
         $levels = 1;
-        while (!is_dir($srcPath)) {
+        while (!is_dir($appPath)) {
             $basePath = dirname($basePath, $levels);
-            $srcPath = $basePath . DIRECTORY_SEPARATOR . "src";
+            $appPath = $basePath . DIRECTORY_SEPARATOR . "app";
             if ($levels > 5) {
                 throw new MvcException("в файле конфига не указан 'basePath'", 100);
             }

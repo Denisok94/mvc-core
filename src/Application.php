@@ -89,6 +89,7 @@ class Application
         ErrorHandler::setFile($logFile);
         //
         $this->controllerNamespace = $this->config->controllerNamespace ?? $this->controllerNamespace;
+        $this->consoleNamespace = $this->config->consoleNamespace ?? $this->consoleNamespace;
         $this->controllerWebBase = $this->config->controllerWebBase ?? $this->controllerWebBase;
         $this->params = $this->config->params ?? [];
     }
@@ -124,6 +125,9 @@ class Application
      */
     public function run()
     {
+        if (!isset(Mvc::$app)) {
+            Mvc::$app = $this;
+        }
         $alias = explode('/', $this->url->getPath());
 
         try {
@@ -159,6 +163,9 @@ class Application
      */
     public function runConsole()
     {
+        if (!isset(Mvc::$app)) {
+            Mvc::$app = $this;
+        }
         try {
             $console = new Console();
 
