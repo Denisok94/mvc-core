@@ -16,7 +16,7 @@ namespace LiteMvc\Core;
  * // получить пуп до каталогов с/для данных
  * Mvc::$app->config->varPath; 
  * Mvc::$app->config->webPath;
- * Mvc::$app->config->srcPath; 
+ * Mvc::$app->config->appPath; 
  * Mvc::$app->config->basePath; // корневой каталог
  * Mvc::$app->request; // данные запроса
  * Mvc::$app->request->id; // получить параметр запроса
@@ -27,5 +27,8 @@ namespace LiteMvc\Core;
  */
 final class Mvc
 {
+    /**
+     * @var Application
+     */
     public static Application $app;
 }

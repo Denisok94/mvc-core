@@ -11,7 +11,7 @@
         "name": "Denisok94",
         "email": "denisok94@inbox.ru"
     }],
-    "version": "0.1.2",
+    "version": "0.1.3",
     "minimum-stability": "stable",
     "require": {
         "php": "7.4 || ^8.0 <8.4",
@@ -22,7 +22,8 @@
         "wa72/url": "^0.7.0",
         "vlucas/phpdotenv": "*",
         "psr/log": "^3.0",
-        "guzzlehttp/guzzle": "^7.13"
+        "guzzlehttp/guzzle": "^7.13",
+        "denisok94/helper-composer": "^0.0.11"
     },
     "config": {
         "allow-plugins": {

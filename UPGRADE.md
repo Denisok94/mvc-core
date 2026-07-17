@@ -1,19 +1,24 @@
 Инструкции по обновлению для lite-mvc
 =========================================
 
-Upgrade from Helper 0.1.2
+Upgrade from 0.1.3
+-----------------------
+- !!!Корневая папка приложения `src` переименована в `app`!!!
+
+
+Upgrade from 0.1.2
 -----------------------
 - мини фиксы + обновлены зависимости
 - обновлёна логика класса для консольных команд: BaseConsoleController 
 - класс HttpClientProxy переименован HttpClientAuthorization, т.к. в нет ничего связанного с прокси
 - обновлен ErrorHandler и MvcLogger
 
-Upgrade from Helper 0.1.1
+Upgrade from 0.1.1
 -----------------------
 - обновлены зависимости
 - добавлен HttpClient class
 
-Upgrade from Helper 0.1.0
+Upgrade from 0.1.0
 -----------------------
 обновить классы файлы:
 ```php
