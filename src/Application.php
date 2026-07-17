@@ -189,7 +189,7 @@ class Application
         } catch (MvcException $ex) {
             echo "\r" . $ex->getMessage();
         } catch (Error | Throwable $th) {
-            throw $th;
+            echo sprintf("%s(%s:%s)", $th->getMessage(), $th->getFile(), $th->getLine());
         } finally {
         }
     }
