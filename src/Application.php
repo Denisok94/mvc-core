@@ -19,6 +19,7 @@ use denisok94\helper\other\MicroTimer;
 use denisok94\helper\other\Console;
 
 /**
+ * @version 0.1.3
  * @property Config $config информация о конфигурации приложения
  * @property MvcLogger|LoggerInterface $log отправить сообщение в лог
  * @property Request $request получить данные запроса

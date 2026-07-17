@@ -16,6 +16,12 @@ use LiteMvc\Core\MvcException;
 class Config
 {
     public string $basePath, $webPath, $appPath, $viewPath, $varPath;
+    /**
+     * теперь путь к папке приложения в переменной: `appPath`
+     * @deprecated устарело с версии 0.1.3
+     * @var string
+     */
+    public string $srcPath;
 
     public array $config = [
         'id' => 'basic',
@@ -81,7 +87,7 @@ class Config
             $this->basePath = $basePath;
             $this->varPath = $basePath . DIRECTORY_SEPARATOR . "var";
             $this->webPath = $basePath . DIRECTORY_SEPARATOR . "web";
-            $this->appPath = $basePath . DIRECTORY_SEPARATOR . "app";
+            $this->srcPath = $this->appPath = $basePath . DIRECTORY_SEPARATOR . "app";
             $this->viewPath = $this->appPath . DIRECTORY_SEPARATOR . "views";
         } else {
             throw new MvcException("в файле конфига не указан 'basePath'", 100);
