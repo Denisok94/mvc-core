@@ -43,26 +43,26 @@ class Config
                 // 'dsn' => 'sqlite:' . __DIR__ . "/../db/user.db",
             ],
             // 'session' => [
-            //     'class' => 'LiteMvc\Core\Component\Session',
+            //     'class' => 'LiteMvc\Component\Session',
             // ],
             // todo:
             'log' => [
-                'class' => 'LiteMvc\Core\Logger\MvcLogger',
+                'class' => 'LiteMvc\Logger\MvcLogger',
                 // 'format' => '',
                 // 'levels' => ['error', 'warning'],
             ],
             // 'errorHandler' => [
-            //     'class' => 'LiteMvc\Core\Logger\ErrorHandler',
+            //     'class' => 'LiteMvc\Logger\ErrorHandler',
             //     'errorAction' => 'site/error',
             // ],
             // 'cache' => [
-            //     'class' => 'LiteMvc\Core\Component\FileCache',
+            //     'class' => 'LiteMvc\Component\FileCache',
             // ],
             // 'user' => [
             //     'class' => 'app\models\User',
             // ],
             // 'mailer' => [
-            //     'class' => 'LiteMvc\Core\Component\Mailer',
+            //     'class' => 'LiteMvc\Component\Mailer',
             // ],
         ]
     ];

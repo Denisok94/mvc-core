@@ -4,6 +4,7 @@ namespace LiteMvc;
 
 use Error;
 use Throwable;
+use LiteMvc\Mvc;
 use LiteMvc\MvcException;
 use LiteMvc\Core\Config;
 use LiteMvc\Core\Builder;
