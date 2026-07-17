@@ -35,17 +35,17 @@ class Builder
     public function controllerInt(string $class, $action = '')
     {
         if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $class)) {
-            $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $class)));
+            $className = str_replace(' ', '', ucwords(str_replace('-', ' ', $class)));
         } else {
             throw new MvcException("Invalid controller name.", 404);
         }
 
-        $class = Mvc::$app->controllerNamespace . '\\' . $class . "Controller";
-        if (!class_exists($class)) {
-            throw new MvcException("Controller class '$class' not found.", 404);
+        $className = Mvc::$app->controllerNamespace . '\\' . $className . "Controller";
+        if (!class_exists($className)) {
+            throw new MvcException("Controller class '$className' not found.", 404);
         }
         /** @var BaseController $controller */
-        $controller = $this->resolveController($class);
+        $controller = $this->resolveController($className);
         $controller->init(Mvc::$app->config);
         return $this->runAction($controller, $action);
     }
@@ -164,6 +164,7 @@ class Builder
             throw new MvcException("Missing required parameter: $name (index: $index)", 400);
         }
 
+        $controller->view->title = $controller->config->name . ($action != $controller->defaultAction ?  "/" . $action : '');
         if ($controller->beforeAction($action)) {
             $return = $method->invokeArgs($controller, $args);
             $controller->afterAction($action, $return);

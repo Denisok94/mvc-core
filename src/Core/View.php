@@ -32,6 +32,7 @@ class View
     public function __construct(Config $config, string $class)
     {
         $this->config = $config;
+        $this->title = $this->config->name;
         $this->class = strtolower(str_replace('Controller', '', H::getClassName($class)));
     }
 
