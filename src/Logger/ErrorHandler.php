@@ -33,6 +33,10 @@ final class ErrorHandler
         register_shutdown_function([__CLASS__, 'handleFatalError']);
     }
 
+    /**
+     * @param int $errno
+     * @return string
+     */
     private static function phpErrorLevelToPsrLevel(int $errno): string
     {
         if ($errno & E_RECOVERABLE_ERROR) {
@@ -50,6 +54,10 @@ final class ErrorHandler
         return 'debug';
     }
 
+    /**
+     * @param mixed|int $errorLevel
+     * @return string
+     */
     public static  function errorLevelToString($errorLevel)
     {
         $errorLevels = [
@@ -75,6 +83,10 @@ final class ErrorHandler
         return $errorLevels[$errorLevel] ?? 'Неизвестный уровень ошибки';
     }
 
+    /**
+     * @param string $class
+     * @return string
+     */
     private static function psrLevelFromException(string $class): string
     {
         if (str_contains($class, 'NotFound')) {
@@ -266,10 +278,12 @@ final class ErrorHandler
 
     /**
      * Включение/отключение логирования
+     * @param bool $enabled
+     * @return void
      */
-    public static function setEnabled($enabled)
+    public static function setEnabled(bool $enabled)
     {
-        self::$enabled = (bool)$enabled;
+        self::$enabled = $enabled;
     }
 
     public static function setFile(string $logFile)

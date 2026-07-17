@@ -3,7 +3,6 @@
 namespace LiteMvc\Controller;
 
 use Exception;
-use LiteMvc\MvcException;
 use LiteMvc\Core\View;
 use LiteMvc\Core\Config;
 

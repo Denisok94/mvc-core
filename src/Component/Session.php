@@ -6,6 +6,7 @@ use Exception;
 
 /**
  * class Session
+ * todo: refactoring
  */
 class Session
 {

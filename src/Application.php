@@ -122,7 +122,7 @@ class Application
     }
 
     /**
-     *
+     * @return void
      */
     public function run()
     {
@@ -152,7 +152,6 @@ class Application
         } finally {
         }
 
-        // echo "<br>";
         // printf($this->queryTimer);
     }
 

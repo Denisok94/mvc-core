@@ -82,7 +82,7 @@ class BaseApiController extends BaseController
     }
 
     /**
-     * Получть значение входящего параметра
+     * Получить значение входящего параметра
      * @param string $path
      * @param bool $nullValue
      */
@@ -93,12 +93,14 @@ class BaseApiController extends BaseController
 
     /**
      * @param string $action
-     * @param array $result
+     * @param array|object $result
      */
     public function afterAction($action, &$result)
     {
-        if (isset($result['code'])) {
+        if (is_array($result) && isset($result['code'])) {
             http_response_code((int) $result['code']);
+        } else if (is_object($result) && property_exists($result, 'code')) {
+            http_response_code((int) $result->code);
         } else {
             http_response_code(BaseApiController::CODE_OK);
         }
