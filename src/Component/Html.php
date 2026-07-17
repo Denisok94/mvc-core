@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteMvc\Core\Component;
+namespace LiteMvc\Component;
 
 /**
  * Генератор Html тегов

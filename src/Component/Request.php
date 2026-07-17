@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteMvc\Core\Component;
+namespace LiteMvc\Component;
 
 /**
  * @property string $rawBody оригинал запроса
@@ -42,6 +42,16 @@ class Request
     public function __get(string $name)
     {
         return $this->storage[$name] ?? null;
+    }
+
+    /**
+     * Проверка существования переменной
+     * @param string $name
+     * @return bool
+     */
+    public function has(string $name): bool
+    {
+        return isset($this->storage[$name]);
     }
 
     /**

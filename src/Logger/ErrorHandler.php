@@ -1,9 +1,9 @@
 <?php
 
-namespace LiteMvc\Core\Logger;
+namespace LiteMvc\Logger;
 
 use Throwable;
-use LiteMvc\Core\Logger\LodModel;
+use LiteMvc\Logger\LodModel;
 // Пример использования
 // ErrorHandler::init();
 
@@ -199,7 +199,7 @@ final class ErrorHandler
             $error->setContext($message['context'] ?? $message['cont'] ?? []);
             $error->setExtra($message['extra'] ?? $message['ext'] ?? []);
             //
-        } else if (is_string($message) || method_exists($message, '__toString')) {
+        } else if (is_string($message) || method_exists($message, '__toString') || $message instanceof \Stringable) {
             $error->setMessage($message);
         } else {
             try {

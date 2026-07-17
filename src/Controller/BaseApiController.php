@@ -1,9 +1,9 @@
 <?php
 
-namespace LiteMvc\Core\Controller;
+namespace LiteMvc\Controller;
 
-use LiteMvc\Core\Mvc;
-use LiteMvc\Core\Controller\BaseController;
+use LiteMvc\Mvc;
+use LiteMvc\Controller\BaseController;
 use denisok94\helper\Helper as H;
 
 /**

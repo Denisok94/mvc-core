@@ -1,12 +1,11 @@
 <?php
 
-namespace LiteMvc\Core\Controller;
+namespace LiteMvc\Controller;
 
 use Exception;
-use ReflectionMethod;
+use LiteMvc\MvcException;
 use LiteMvc\Core\View;
 use LiteMvc\Core\Config;
-use LiteMvc\Core\MvcException;
 
 /**
  * @property Config $config информация о конфигурации приложения
@@ -52,41 +51,6 @@ abstract class BaseController
         return [];
     }
 
-    /**
-     *
-     * @param string $action
-     * @throws Exception
-     */
-    public function runAction(string $action)
-    {
-        if ($action === '') {
-            $action = $this->defaultAction;
-        }
-
-        $actionMap = $this->actions();
-        if (isset($actionMap[$action])) {
-            // return Yii::createObject($actionMap[$id], [$id, $this]);
-        }
-
-        if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $action)) {
-            $methodName = 'action' . str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
-            if (method_exists($this, $methodName)) {
-                $method = new ReflectionMethod($this, $methodName);
-                if ($method->isPublic() && $method->getName() === $methodName) {
-                    $this->view->title = $action;
-                    if ($this->beforeAction($action)) {
-                        $return = $this->$methodName();
-                        $this->afterAction($action, $return);
-                        return $return;
-                    }
-                }
-            } else {
-                throw new MvcException("action '$action' - method name '$methodName' not found.", 404);
-            }
-        }
-
-        return null;
-    }
 
     /**
      * @param string $action

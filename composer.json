@@ -4,7 +4,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "LiteMvc\\Core\\": "src/"
+            "LiteMvc\\": "src/"
         }
     },
     "authors": [{

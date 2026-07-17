@@ -4,8 +4,8 @@ namespace LiteMvc\Core;
 
 use Exception, Throwable;
 use LiteMvc\Core\Config;
-use LiteMvc\Core\AssetBundle;
-use LiteMvc\Core\Component\Html;
+use LiteMvc\AssetBundle;
+use LiteMvc\Component\Html;
 use denisok94\helper\Helper as H;
 
 /**

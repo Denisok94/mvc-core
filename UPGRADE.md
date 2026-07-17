@@ -3,8 +3,9 @@
 
 Upgrade from 0.1.3
 -----------------------
-- !!!Корневая папка приложения `src` переименована в `app`!!!
-- Обновите пути Mvc::$app->config->srcPath → Mvc::$app->config->appPath
+- !!!смена namespace: `LiteMvc\Core` → `LiteMvc`!!!
+- !!Корневая папка приложения `src` переименована в `app`!!
+- Обновите пути `Mvc::$app->config->srcPath` → `Mvc::$app->config->appPath`
 
 
 Upgrade from 0.1.2

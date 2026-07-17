@@ -1,20 +1,18 @@
 <?php
 
-namespace LiteMvc\Core;
+namespace LiteMvc;
 
 use Error;
-use Exception;
 use Throwable;
+use LiteMvc\MvcException;
 use LiteMvc\Core\Config;
-use LiteMvc\Core\MvcException;
-use LiteMvc\Core\Component\Session;
-use LiteMvc\Core\Component\Request;
-use LiteMvc\Core\Controller\BaseController;
-use LiteMvc\Core\Controller\BaseConsoleController;
-use LiteMvc\Core\Logger\MvcLogger;
-use LiteMvc\Core\Logger\LoggerInterface;
-use LiteMvc\Core\Logger\ErrorHandler;
+use LiteMvc\Core\Builder;
+use LiteMvc\Component\Session;
+use LiteMvc\Component\Request;
+use LiteMvc\Logger\MvcLogger;
+use LiteMvc\Logger\ErrorHandler;
 use Wa72\Url\Url;
+use Psr\Log\LoggerInterface;
 use denisok94\helper\other\MicroTimer;
 use denisok94\helper\other\Console;
 
@@ -23,6 +21,7 @@ use denisok94\helper\other\Console;
  * @property Config $config информация о конфигурации приложения
  * @property MvcLogger|LoggerInterface $log отправить сообщение в лог
  * @property Request $request получить данные запроса
+ * @property Url $url получить путь запроса
  * @property array $components компоненты приложения (в разработке)
  * @property array $params параметры (в разработке)
  * @property MicroTimer $queryTimer информация о времени выполнения кода
@@ -43,9 +42,9 @@ class Application
     public $session = null;
     public Request $request;
     protected ?string $sessionClass = null;
-    protected string $controllerNamespace = 'app\\controllers';
-    protected string $consoleNamespace = 'app\\commands';
-    protected string $controllerWebBase = 'site';
+    public string $controllerNamespace = 'app\\controllers';
+    public string $consoleNamespace = 'app\\commands';
+    public string $controllerWebBase = 'site';
     public $components = [];
     public $params = [];
 
@@ -136,10 +135,7 @@ class Application
                 $alias[1] = $this->controllerWebBase;
             }
 
-            if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $alias[1])) {
-                $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $alias[1])));
-                echo $this->controllerInt($class, $alias[2] ?? '');
-            }
+            echo (new Builder())->controllerInt($alias[1], $alias[2] ?? '');
         } catch (MvcException $ex) {
             http_response_code($ex->getCode());
             echo $ex->getMessage();
@@ -148,7 +144,7 @@ class Application
             if (isset($this->components['errorHandler']['errorAction'])) {
                 $errorAction = $this->components['errorHandler']['errorAction'];
                 list($class, $action) = explode('/', $errorAction);
-                echo $this->controllerInt($class, $action);
+                echo (new Builder())->controllerInt($class, $action);
             } else {
                 echo sprintf("%s(%s:%s)", $th->getMessage(), $th->getFile(), $th->getLine());
             }
@@ -170,20 +166,8 @@ class Application
         try {
             $console = new Console();
 
-            if ($alias = $console->getArgument(0)) {
-
-                if (preg_match('/^(?:[a-z0-9_]+-)*[a-z0-9_]+$/', $alias)) {
-                    $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $alias)));
-
-                    $class = $this->consoleNamespace . '\\' . $class . "Controller";
-                    if (!class_exists($class)) {
-                        throw new MvcException("console controller class '$class' not found.", 404);
-                    }
-                    /** @var BaseConsoleController $controller */
-                    $controller = new $class();
-                    $controller->init($this->config)
-                        ->execute();
-                }
+            if ($class = $console->getArgument(0)) {
+                (new Builder())->consoleControllerInt($class);
             } else {
                 throw new MvcException("не указано имя контроллера 'php LiteMvc.php {consoleController}'", 404);
             }
@@ -193,18 +177,6 @@ class Application
             echo sprintf("%s(%s:%s)", $th->getMessage(), $th->getFile(), $th->getLine());
         } finally {
         }
-    }
-
-    private function controllerInt(string $class, $action = '')
-    {
-        $class = $this->controllerNamespace . '\\' . $class . "Controller";
-        if (!class_exists($class)) {
-            throw new MvcException("Controller class '$class' not found.", 404);
-        }
-        /** @var BaseController $controller */
-        $controller = new $class();
-        $controller->init($this->config);
-        return $controller->runAction($action);
     }
 
     // Запрещаем клонирование объекта

@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteMvc\Core\Logger;
+namespace LiteMvc\Logger;
 
 use  DateTime, DateTimeZone;
 

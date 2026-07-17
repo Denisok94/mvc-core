@@ -1,6 +1,6 @@
 <?php
 
-namespace LiteMvc\Core\Component\HttpClient;
+namespace LiteMvc\Component\HttpClient;
 
 use stdClass;
 

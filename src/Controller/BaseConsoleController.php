@@ -1,10 +1,10 @@
 <?php
 
-namespace LiteMvc\Core\Controller;
+namespace LiteMvc\Controller;
 
 use Exception;
+use LiteMvc\MvcException;
 use LiteMvc\Core\Config;
-use LiteMvc\Core\MvcException;
 use denisok94\helper\other\Console;
 
 /**

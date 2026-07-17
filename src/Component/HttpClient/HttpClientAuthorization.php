@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LiteMvc\Core\Component\HttpClient;
+namespace LiteMvc\Component\HttpClient;
 
 use stdClass;
 use Psr\Log\LoggerInterface;
