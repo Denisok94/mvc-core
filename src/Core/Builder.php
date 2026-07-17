@@ -135,7 +135,7 @@ class Builder
         $args = [];
 
         $pathParts = explode('/', Mvc::$app->url->getPath());
-        unset($pathParts[0], $pathParts[1]); // удаляем имя controller и action
+        unset($pathParts[0], $pathParts[1], $pathParts[2]); // удаляем host, controller и action
         $pathParams = array_values($pathParts); // Пересчитываем индексы, чтобы были 0, 1, 2...
 
         foreach ($method->getParameters() as $index => $param) {
