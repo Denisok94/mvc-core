@@ -164,7 +164,7 @@ class Builder
             throw new MvcException("Missing required parameter: $name (index: $index)", 400);
         }
 
-        $controller->view->title = $controller->config->name . ($action != $controller->defaultAction ?  "/" . $action : '');
+        $controller->view->title = $controller->config->name . ($action != $controller->defaultAction ?  " / " . $action : '');
         if ($controller->beforeAction($action)) {
             $return = $method->invokeArgs($controller, $args);
             $controller->afterAction($action, $return);
