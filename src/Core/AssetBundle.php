@@ -130,7 +130,11 @@ class AssetBundle
                 if (is_dir($from)) {
                     $this->recurse_copy($from, $to);
                 } else {
-                    if (!file_exists($to)) {
+                    if (
+                        !file_exists($to)
+                        || filemtime($from) !== filemtime($to)
+                        || filesize($from) !== filesize($to)
+                    ) {
                         copy($from, $to);
                     }
                 }
